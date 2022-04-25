@@ -21,7 +21,7 @@ def run_training(model_name):
                             test_img_files)
 
     # If not, train anew
-    if not os.path.exists(f"models/Test_scale_best.h5"):
+    if not os.path.exists(f"models/colab_best.h5"):
         do_unet.fit(model_name,
                     epochs=1,
                     imgs_per_epoch=64,

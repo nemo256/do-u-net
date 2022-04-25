@@ -175,8 +175,8 @@ class DO_UNet:
         self.test_dataset = self.generate_test_dataset(test_files)
 
         # Load weights from best checkpoint
-        if os.path.exists(f"models/Test_scale_best.h5"):
-            self.model = get_do_unet().load_weights(f"models/Test_scale_best.h5")
+        if os.path.exists(f"models/colab_best.h5"):
+            self.model = get_do_unet().load_weights(f"models/colab_best.h5")
         else:
             self.model = get_do_unet()
 
