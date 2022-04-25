@@ -157,14 +157,12 @@ def get_do_unet():
 
     model = tf.keras.models.Model(inputs=inputs, outputs=(out_mask, out_edge))
 
-    opt = tf.optimizers.Adam(lr=0.0001)
+    opt = tf.optimizers.Adam(learning_rate=0.0001)
 
-    model.compile(loss={'mask': tversky_loss,
-                        'edge': tversky_loss},
+    model.compile(loss="binary_crossentropy",
                   loss_weights=[0.3, 0.7],
-                  optimizer=opt,
-                  metrics={'mask': [mean_iou, dsc, tversky], 
-                           'edge': [mean_iou, dsc, tversky]})
+                  optimizer="adam",
+                  metrics=["Accuracy"])
 
     return model
 
@@ -179,6 +177,8 @@ class DO_UNet:
             self.model = get_do_unet().load_weights(f"models/colab_best.h5")
         else:
             self.model = get_do_unet()
+
+        self.compile()
 
     def generate_train_dataset(self, img_files):
         imgs, mask, edge = data.load_data(img_files)

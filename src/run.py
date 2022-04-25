@@ -17,8 +17,8 @@ def run_training(model_name):
     test_img_files = glob.glob('data/test/*.jpg')
 
     # Load best weights if they exist (checkpoint)
-    do_unet = model.DO_UNet(train_img_files,
-                            test_img_files)
+    do_unet = model.get_do_unet()
+    do_unet.load_weights(f"models/colab_best.h5")
 
     # If not, train anew
     if not os.path.exists(f"models/colab_best.h5"):
@@ -31,25 +31,29 @@ def run_training(model_name):
     imgs, mask, edge = data.load_data(test_img_files)
     img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge, padding=200, input_size=188, output_size=196)
 
-    index = 200
+    index = 3
 
-    pred = np.array([img_chips[index]])
+    image = np.array([img_chips[index]])
 
-    output = model.get_do_unet().predict(pred)
+    output = do_unet.predict(image)
     output = np.squeeze(output)
 
     fig = plt.figure(figsize=(15, 10), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
-    ax = fig.add_subplot(2, 3, 1)
+    ax = fig.add_subplot(2, 4, 1)
     ax.imshow(img_chips[index])
-    ax = fig.add_subplot(2, 3, 2)
+    ax = fig.add_subplot(2, 4, 2)
     ax.imshow(edge_chips[index])
-    ax = fig.add_subplot(2, 3, 3)
+    ax = fig.add_subplot(2, 4, 3)
     ax.imshow(mask_chips[index])
-    ax = fig.add_subplot(2, 3, 5)
+    ax = fig.add_subplot(2, 4, 4)
+    ax.imshow((mask_chips[index] - edge_chips[index]) > 0)
+    ax = fig.add_subplot(2, 4, 6)
     ax.imshow(output[0])
-    ax = fig.add_subplot(2, 3, 6)
+    ax = fig.add_subplot(2, 4, 7)
     ax.imshow(output[1])
+    ax = fig.add_subplot(2, 4, 8)
+    ax.imshow((output[1] - output[0]) > 0)
 
     plt.savefig("sample.png")
     plt.show()
