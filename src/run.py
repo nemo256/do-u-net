@@ -51,6 +51,7 @@ def run_training(model_name):
     ax = fig.add_subplot(2, 3, 6)
     ax.imshow(output[1])
 
+    plt.savefig("sample.png")
     plt.show()
 
 
