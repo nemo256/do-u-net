@@ -29,32 +29,29 @@ def run_training(model_name):
                     workers=2)
 
     imgs, mask, edge = data.load_data(test_img_files)
-    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge, padding=200, input_size=380, output_size=196)
+    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge, padding=200, input_size=188, output_size=196)
 
-    ind = 200
-    pred = np.array([img_chips[ind]])
-    pred.shape
+    index = 200
 
-    # Fix image sizes (downscaling)
-    fig = plt.figure(figsize=(25, 10), dpi=80)
-    fig.subplots_adjust(hspace=0.1, wspace=0.1)
+    pred = np.array([img_chips[index]])
 
     output = model.get_do_unet().predict(pred)
-    # output = np.squeeze(output)
-    # output.shape
+    output = np.squeeze(output)
 
-    # fig = plt.figure(figsize=(15, 10), dpi=80)
-    # fig.subplots_adjust(hspace=0.1, wspace=0.1)
-    # ax = fig.add_subplot(2, 3, 1)
-    # ax.imshow(img_chips[ind])
-    # ax = fig.add_subplot(2, 3, 2)
-    # ax.imshow(edge_chips[ind])
-    # ax = fig.add_subplot(2, 3, 3)
-    # ax.imshow(mask_chips[ind])
-    # ax = fig.add_subplot(2, 3, 5)
-    # ax.imshow(output[0])
-    # ax = fig.add_subplot(2, 3, 6)
-    # ax.imshow(output[1])
+    fig = plt.figure(figsize=(15, 10), dpi=80)
+    fig.subplots_adjust(hspace=0.1, wspace=0.1)
+    ax = fig.add_subplot(2, 3, 1)
+    ax.imshow(img_chips[index])
+    ax = fig.add_subplot(2, 3, 2)
+    ax.imshow(edge_chips[index])
+    ax = fig.add_subplot(2, 3, 3)
+    ax.imshow(mask_chips[index])
+    ax = fig.add_subplot(2, 3, 5)
+    ax.imshow(output[0])
+    ax = fig.add_subplot(2, 3, 6)
+    ax.imshow(output[1])
+
+    plt.show()
 
 
 if __name__ == '__main__':
