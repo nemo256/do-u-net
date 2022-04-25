@@ -7,6 +7,7 @@ import os
 
 import model, data
 
+# Plotting fix
 import tkinter
 matplotlib.use('TkAgg')
 
@@ -15,9 +16,11 @@ def run_training(model_name):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
+    # Load best weights if they exist (checkpoint)
     do_unet = model.DO_UNet(train_img_files,
                             test_img_files)
 
+    # If not, train anew
     if not os.path.exists(f"models/Test_scale_best.h5"):
         do_unet.fit(model_name,
                     epochs=1,
@@ -31,9 +34,12 @@ def run_training(model_name):
     ind = 200
     pred = np.array([img_chips[ind]])
     pred.shape
-    print(pred)
 
-    # output = do_unet.predict(pred)
+    # Fix image sizes (downscaling)
+    fig = plt.figure(figsize=(25, 10), dpi=80)
+    fig.subplots_adjust(hspace=0.1, wspace=0.1)
+
+    output = model.get_do_unet().predict(pred)
     # output = np.squeeze(output)
     # output.shape
 

@@ -174,6 +174,7 @@ class DO_UNet:
         self.train_dataset = self.generate_train_dataset(train_files)
         self.test_dataset = self.generate_test_dataset(test_files)
 
+        # Load weights from best checkpoint
         if os.path.exists(f"models/Test_scale_best.h5"):
             self.model = get_do_unet().load_weights(f"models/Test_scale_best.h5")
         else:
