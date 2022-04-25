@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+import os
+
 import data
 
 
@@ -168,14 +170,12 @@ def get_do_unet():
 
 
 class DO_UNet:
-    def __init__(self, train_files, test_files, scale_invariant=True):
-        self.scale_invariant = scale_invariant
-
+    def __init__(self, train_files, test_files):
         self.train_dataset = self.generate_train_dataset(train_files)
         self.test_dataset = self.generate_test_dataset(test_files)
 
-        if self.scale_invariant:
-            self.model = get_do_unet_scale_invariant()
+        if os.path.exists(f"models/Test_scale_best.h5"):
+            self.model = get_do_unet().load_weights(f"models/Test_scale_best.h5")
         else:
             self.model = get_do_unet()
 
@@ -183,47 +183,25 @@ class DO_UNet:
         imgs, mask, edge = data.load_data(img_files)
 
         def train_gen():
-            if self.scale_invariant:
-                return data.train_generator(imgs, mask,
-                                            edge=edge,
-                                            padding=200,
-                                            input_size=380,
-                                            output_size=196,
-                                            scale_range=0.5)
-
             return data.train_generator(imgs, mask,
                                         edge=edge,
                                         padding=100,
                                         input_size=188,
                                         output_size=100)
 
-        if self.scale_invariant:
-            return tf.data.Dataset.from_generator(train_gen,
-                                                  (tf.float64, ((tf.float64), (tf.float64))),
-                                                  ((380, 380, 3), ((196, 196, 1), (196, 196, 1)))
-                                                 )
-
         return tf.data.Dataset.from_generator(train_gen,
                                               (tf.float64, ((tf.float64), (tf.float64))),
                                               ((188, 188, 3), ((100, 100, 1), (100, 100, 1)))
                                              )
 
-
     def generate_test_dataset(self, img_files):
         imgs, mask, edge = data.load_data(img_files)
 
-        if self.scale_invariant:
-            img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask,
-                                                                edge=edge,
-                                                                padding=200,
-                                                                input_size=380,
-                                                                output_size=196)
-        else:
-            img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask,
-                                                                edge=edge,
-                                                                padding=100,
-                                                                input_size=188,
-                                                                output_size=100)
+        img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask,
+                                                            edge=edge,
+                                                            padding=100,
+                                                            input_size=188,
+                                                            output_size=100)
 
         return tf.data.Dataset.from_tensor_slices((img_chips,
                                                    (mask_chips, edge_chips))
