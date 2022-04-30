@@ -25,7 +25,7 @@ def run_training(model_name):
                     workers=8)
 
     imgs, mask, edge = data.load_data(test_img_files)
-    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge, padding=200, input_size=188, output_size=196)
+    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
 
     index = 3
 
