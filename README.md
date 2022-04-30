@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ## Training the model
 
 > Alternatively contact me to get the best weights
-1. Clone the repo
+1. Initiate the training
 ```bash
 python src/run.py
 ```
