@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 
 import glob
@@ -7,21 +6,18 @@ import os
 
 import model, data
 
-# Plotting fix
-import tkinter
-matplotlib.use('TkAgg')
-
 
 def run_training(model_name):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
-    # Load best weights if they exist (checkpoint)
     do_unet = model.get_do_unet()
-    do_unet.load_weights(f"models/colab_best.h5")
 
-    # If not, train anew
-    if not os.path.exists(f"models/colab_best.h5"):
+    # Load best weights if they exist (checkpoint)
+    if os.path.exists(f"models/Test_scale_best.h5"):
+        do_unet.load_weights(f"models/Test_scale_best.h5")
+    else:
+        # If not, train anew
         do_unet.fit(model_name,
                     epochs=100,
                     imgs_per_epoch=1000,
@@ -56,7 +52,6 @@ def run_training(model_name):
     ax.imshow((output[1] - output[0]) > 0)
 
     plt.savefig("sample.png")
-    plt.show()
 
 
 if __name__ == '__main__':
