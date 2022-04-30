@@ -34,7 +34,7 @@ def run_training(model_name):
     output = do_unet.predict(image)
     output = np.squeeze(output)
 
-    fig = plt.figure(figsize=(15, 10), dpi=80)
+    fig = plt.figure(figsize=(25, 12), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
     ax = fig.add_subplot(2, 4, 1)
     ax.imshow(img_chips[index])
