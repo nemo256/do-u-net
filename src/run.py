@@ -23,10 +23,10 @@ def run_training(model_name):
     # If not, train anew
     if not os.path.exists(f"models/colab_best.h5"):
         do_unet.fit(model_name,
-                    epochs=1,
-                    imgs_per_epoch=64,
-                    batchsize=2,
-                    workers=2)
+                    epochs=100,
+                    imgs_per_epoch=1000,
+                    batchsize=8,
+                    workers=8)
 
     imgs, mask, edge = data.load_data(test_img_files)
     img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge, padding=200, input_size=188, output_size=196)
