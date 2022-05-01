@@ -145,8 +145,8 @@ def aug_img(image):
 def train_generator(imgs, mask, edge,
                     scale_range=None,
                     padding=200,
-                    input_size=380,
-                    output_size=196,
+                    input_size=188,
+                    output_size=100,
                     skip_empty=False):
     if scale_range is not None:
         scale_range = [1 - scale_range, 1 + scale_range]
