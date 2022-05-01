@@ -14,8 +14,8 @@ def run_training(model_name):
     do_unet = model.get_do_unet()
 
     # Load best weights if they exist (checkpoint)
-    if os.path.exists(f"models/Test_scale_best.h5"):
-        do_unet.load_weights(f"models/Test_scale_best.h5")
+    if os.path.exists(f'models/Test_scale_best.h5'):
+        do_unet.load_weights(f'models/Test_scale_best.h5')
     else:
         # If not, train anew
         do_unet.fit(model_name,
@@ -27,7 +27,7 @@ def run_training(model_name):
     imgs, mask, edge = data.load_data(test_img_files)
     img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
 
-    index = 3
+    index = 1
 
     image = np.array([img_chips[index]])
 
@@ -43,15 +43,15 @@ def run_training(model_name):
     ax = fig.add_subplot(2, 4, 3)
     ax.imshow(mask_chips[index])
     ax = fig.add_subplot(2, 4, 4)
-    ax.imshow((mask_chips[index] - edge_chips[index]) > 0)
+    ax.imshow((mask_chips[index] - edge_chips[index]) > 0, cmap='gray')
     ax = fig.add_subplot(2, 4, 6)
-    ax.imshow(output[0])
-    ax = fig.add_subplot(2, 4, 7)
     ax.imshow(output[1])
+    ax = fig.add_subplot(2, 4, 7)
+    ax.imshow(output[0])
     ax = fig.add_subplot(2, 4, 8)
-    ax.imshow((output[1] - output[0]) > 0)
+    ax.imshow((output[1] - output[0]) < 0, cmap='gray')
 
-    plt.savefig("sample.png")
+    plt.savefig('sample.png')
 
 
 if __name__ == '__main__':
