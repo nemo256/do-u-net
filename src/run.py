@@ -11,23 +11,32 @@ def run_training(model_name):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
+    do_unet = model.DO_UNet(train_img_files,
+                            test_img_files)
+
+    do_unet.fit(model_name,
+                epochs=100,
+                imgs_per_epoch=1000,
+                batchsize=8,
+                workers=8)
+
+
+def predict(index):
+    train_img_files = glob.glob('data/train/*.jpg')
+    test_img_files = glob.glob('data/test/*.jpg')
+
     do_unet = model.get_do_unet()
 
-    # Load best weights if they exist (checkpoint)
-    if os.path.exists(f'models/Test_scale_best.h5'):
-        do_unet.load_weights(f'models/Test_scale_best.h5')
-    else:
-        # If not, train anew
-        do_unet.fit(model_name,
-                    epochs=100,
-                    imgs_per_epoch=1000,
-                    batchsize=8,
-                    workers=8)
+    # Check for existing weights
+    if not os.path.exists(f'models/Test_scale_best.h5'):
+        run_training('Test_scale')
+
+    # Load best weights
+    do_unet.load_weights(f'models/Test_scale_best.h5')
 
     imgs, mask, edge = data.load_data(test_img_files)
     img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
 
-    index = 1
     image = np.array([img_chips[index]])
 
     output = do_unet.predict(image)
@@ -48,15 +57,28 @@ def run_training(model_name):
     ax = fig.add_subplot(2, 4, 7)
     ax.imshow(output[0])
     ax = fig.add_subplot(2, 4, 8)
-    ax.imshow((output[1] - output[0]) < 0, cmap='gray')
+    ax.imshow((output[1] - output[0]), cmap='gray')
 
     plt.savefig('sample.png')
 
 
 def evaluate():
+    train_img_files = glob.glob('data/train/*.jpg')
+    test_img_files = glob.glob('data/test/*.jpg')
+
+    do_unet = model.get_do_unet()
+
+    # Check for existing weights
+    if not os.path.exists(f'models/Test_scale_best.h5'):
+        run_training('Test_scale')
+
+    # Load best weights
+    do_unet.load_weights(f'models/Test_scale_best.h5')
+
+    imgs, mask, edge = data.load_data(test_img_files)
+    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
     print(do_unet.evaluate(img_chips, (mask_chips, edge_chips)))
 
 
 if __name__ == '__main__':
-    run_training('Test_scale')
-    evaluate()
+    predict(54)
