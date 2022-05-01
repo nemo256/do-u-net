@@ -1,9 +1,9 @@
+import glob
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-import glob
-import os
-
+# Custom imports
 import model, data
 
 
@@ -28,7 +28,6 @@ def run_training(model_name):
     img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
 
     index = 1
-
     image = np.array([img_chips[index]])
 
     output = do_unet.predict(image)
@@ -54,5 +53,10 @@ def run_training(model_name):
     plt.savefig('sample.png')
 
 
+def evaluate():
+    print(do_unet.evaluate(img_chips, (mask_chips, edge_chips)))
+
+
 if __name__ == '__main__':
     run_training('Test_scale')
+    evaluate()
