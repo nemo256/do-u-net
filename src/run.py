@@ -45,7 +45,6 @@ def concat(imgs):
     return cv2.vconcat([cv2.hconcat(im_list) for im_list in imgs[:,:,:,:,:]])
 
 
-
 def predict(image = glob.glob('data/test/Im037_0.jpg')):
     do_unet = model.get_do_unet()
 
@@ -66,8 +65,8 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
     new_mask_chips = reshape(new_mask_chips, get_sizes(img)[0][0], get_sizes(img)[0][1], 'output')
     new_edge_chips = reshape(new_edge_chips, get_sizes(img)[0][0], get_sizes(img)[0][1], 'output')
 
-    new_mask = cv2.vconcat([cv2.hconcat(im_list) for im_list in new_mask_chips[:,:,:,:,:]])
-    new_edge = cv2.vconcat([cv2.hconcat(im_list) for im_list in new_edge_chips[:,:,:,:,:]])
+    new_mask = concat(new_mask_chips)
+    new_edge = concat(new_edge_chips)
 
     fig = plt.figure(figsize=(25, 12), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
