@@ -84,7 +84,7 @@ def load_markup(markup_files, imgs, edge_size=2):
     return mask, edge
 
 
-def preprocess_data(imgs, mask, edge, padding=200):
+def preprocess_data(imgs, mask, edge, padding=100):
     imgs = [np.pad(img, ((padding, padding),
                          (padding, padding), (0, 0)), mode='constant') for img in imgs]
     mask = [np.pad(mask, ((padding, padding),
@@ -95,7 +95,7 @@ def preprocess_data(imgs, mask, edge, padding=200):
     return imgs, mask, edge
 
 
-def load_data(img_list, edge_size=2, padding=200):
+def load_data(img_list, edge_size=2, padding=100):
     imgs = load_image_list(img_list)
     imgs = clahe_images(imgs)
 
@@ -144,7 +144,7 @@ def aug_img(image):
 
 def train_generator(imgs, mask, edge,
                     scale_range=None,
-                    padding=200,
+                    padding=100,
                     input_size=188,
                     output_size=100,
                     skip_empty=False):
@@ -227,7 +227,7 @@ def train_generator(imgs, mask, edge,
 
 def test_chips(imgs, mask,
                edge=None,
-               padding=200,
+               padding=100,
                input_size=188,
                output_size=100):
     img_chips = []

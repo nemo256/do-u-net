@@ -1,5 +1,6 @@
 import glob
 import os
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,7 +8,7 @@ import matplotlib.pyplot as plt
 import model, data
 
 
-def run_training(model_name):
+def train(model_name):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -21,43 +22,70 @@ def run_training(model_name):
                 workers=8)
 
 
-def predict(index):
-    train_img_files = glob.glob('data/train/*.jpg')
-    test_img_files = glob.glob('data/test/*.jpg')
+def get_sizes(img,
+              offset=150,
+              input=188,
+              output=100):
+    return [(len(np.arange(offset, img[0].shape[0] - input / 2, output)), len(np.arange(offset, img[0].shape[1] - input / 2, output)))]
 
+
+def reshape(img,
+            size_x,
+            size_y,
+            type='input'):
+    if type == 'input':
+        return img.reshape(size_x, size_y, 188, 188, 1)
+    elif type == 'output':
+        return img.reshape(size_x, size_y, 100, 100, 1)
+    else:
+        print(f'Invalid type: {type} (input, output)')
+
+
+def concat(imgs):
+    return cv2.vconcat([cv2.hconcat(im_list) for im_list in imgs[:,:,:,:,:]])
+
+
+
+def predict(image = glob.glob('data/test/Im037_0.jpg')):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
     if not os.path.exists(f'models/Test_scale_best.h5'):
-        run_training('Test_scale')
+        train('Test_scale')
 
     # Load best weights
     do_unet.load_weights(f'models/Test_scale_best.h5')
 
-    imgs, mask, edge = data.load_data(test_img_files)
-    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
+    img, mask, edge = data.load_data(image, padding=200)
+    img_chips, mask_chips, edge_chips = data.test_chips(img, mask, edge=edge, padding=100)
 
-    image = np.array([img_chips[index]])
+    output = do_unet.predict(img_chips)
+    new_mask_chips = np.array(output[0])
+    new_edge_chips = np.array(output[1])
 
-    output = do_unet.predict(image)
-    output = np.squeeze(output)
+    new_mask_chips = reshape(new_mask_chips, get_sizes(img)[0][0], get_sizes(img)[0][1], 'output')
+    new_edge_chips = reshape(new_edge_chips, get_sizes(img)[0][0], get_sizes(img)[0][1], 'output')
+
+    new_mask = cv2.vconcat([cv2.hconcat(im_list) for im_list in new_mask_chips[:,:,:,:,:]])
+    new_edge = cv2.vconcat([cv2.hconcat(im_list) for im_list in new_edge_chips[:,:,:,:,:]])
 
     fig = plt.figure(figsize=(25, 12), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
-    ax = fig.add_subplot(2, 4, 1)
-    ax.imshow(img_chips[index])
-    ax = fig.add_subplot(2, 4, 2)
-    ax.imshow(edge_chips[index])
-    ax = fig.add_subplot(2, 4, 3)
-    ax.imshow(mask_chips[index])
-    ax = fig.add_subplot(2, 4, 4)
-    ax.imshow((mask_chips[index] - edge_chips[index]) > 0, cmap='gray')
-    ax = fig.add_subplot(2, 4, 6)
-    ax.imshow(output[1])
-    ax = fig.add_subplot(2, 4, 7)
-    ax.imshow(output[0])
-    ax = fig.add_subplot(2, 4, 8)
-    ax.imshow((output[1] - output[0]), cmap='gray')
+    ax = fig.add_subplot(2, 3, 1)
+    ax.set_title('Test image')
+    ax.imshow(np.array(img)[0,:,:,:])
+    ax = fig.add_subplot(2, 3, 2)
+    ax.set_title('Test mask')
+    ax.imshow(np.array(mask)[0,:,:])
+    ax = fig.add_subplot(2, 3, 3)
+    ax.set_title('Test edge')
+    ax.imshow(np.array(edge)[0,:,:])
+    ax = fig.add_subplot(2, 3, 5)
+    ax.set_title('Predicted mask')
+    ax.imshow(new_mask)
+    ax = fig.add_subplot(2, 3, 6)
+    ax.set_title('Predicted edge')
+    ax.imshow(new_edge)
 
     plt.savefig('sample.png')
 
@@ -70,15 +98,15 @@ def evaluate():
 
     # Check for existing weights
     if not os.path.exists(f'models/Test_scale_best.h5'):
-        run_training('Test_scale')
+        train('Test_scale')
 
     # Load best weights
     do_unet.load_weights(f'models/Test_scale_best.h5')
 
-    imgs, mask, edge = data.load_data(test_img_files)
-    img_chips, mask_chips, edge_chips = data.test_chips(imgs, mask, edge=edge)
+    img, mask, edge = data.load_data(test_img_files)
+    img_chips, mask_chips, edge_chips = data.test_chips(img, mask, edge=edge)
     print(do_unet.evaluate(img_chips, (mask_chips, edge_chips)))
 
 
 if __name__ == '__main__':
-    predict(54)
+    predict()
