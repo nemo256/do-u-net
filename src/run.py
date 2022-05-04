@@ -101,7 +101,7 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
 
 
 # evaluate model accuracies (mask accuracy and edge accuracy)
-def evaluate():
+def evaluate(model_name):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -140,4 +140,4 @@ def threshold(img = 'output/edge.png'):
 if __name__ == '__main__':
     # predict()
     # threshold()
-    evaluate()
+    evaluate('sigmoid')
