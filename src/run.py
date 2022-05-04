@@ -54,11 +54,11 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
-    if not os.path.exists(f'models/{model_name}_best.h5'):
-        train('Test_scale')
+    if not os.path.exists(f'models/{model_name}.h5'):
+        train(model_name)
 
     # load best weights
-    do_unet.load_weights(f'models/{model_name}_best.h5')
+    do_unet.load_weights(f'models/{model_name}.h5')
 
     # load data
     img, mask, edge = data.load_data(image, padding=200)
@@ -108,11 +108,11 @@ def evaluate():
     do_unet = model.get_do_unet()
 
     # Check for existing weights
-    if not os.path.exists(f'models/Test_scale_best.h5'):
-        train('Test_scale')
+    if not os.path.exists(f'models/{model_name}.h5'):
+        train(model_name)
 
     # load best weights
-    do_unet.load_weights(f'models/Test_scale_best.h5')
+    do_unet.load_weights(f'models/{model_name}.h5')
 
     # load data
     img, mask, edge = data.load_data(test_img_files)
@@ -138,5 +138,6 @@ def threshold(img = 'output/edge.png'):
 
 
 if __name__ == '__main__':
-    predict()
-    threshold()
+    # predict()
+    # threshold()
+    evaluate()
