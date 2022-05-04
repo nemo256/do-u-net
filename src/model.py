@@ -100,11 +100,7 @@ def iou_loss(y_true, y_pred):
 
 def get_callbacks(name):
     return [
-        tf.keras.callbacks.ModelCheckpoint(f'models/{name}_all.h5',
-                                           save_best_only=False,
-                                           save_weights_only=True,
-                                           verbose=0),
-        tf.keras.callbacks.ModelCheckpoint(f'models/{name}_best.h5',
+        tf.keras.callbacks.ModelCheckpoint(f'models/{name}.h5',
                                            save_best_only=True,
                                            save_weights_only=True,
                                            verbose=1)
@@ -171,13 +167,7 @@ class DO_UNet:
     def __init__(self, train_files, test_files):
         self.train_dataset = self.generate_train_dataset(train_files)
         self.test_dataset = self.generate_test_dataset(test_files)
-
-        # Load weights from best checkpoint
-        if os.path.exists(f"models/Test_scale_best.h5"):
-            self.model = get_do_unet().load_weights(f"models/Test_scale_best.h5")
-        else:
-            self.model = get_do_unet()
-
+        self.model = get_do_unet()
         self.compile()
 
     def generate_train_dataset(self, img_files):

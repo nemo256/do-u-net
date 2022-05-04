@@ -54,11 +54,11 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
-    if not os.path.exists(f'models/Test_scale_best.h5'):
+    if not os.path.exists(f'models/{model_name}_best.h5'):
         train('Test_scale')
 
     # load best weights
-    do_unet.load_weights(f'models/Test_scale_best.h5')
+    do_unet.load_weights(f'models/{model_name}_best.h5')
 
     # load data
     img, mask, edge = data.load_data(image, padding=200)
@@ -124,11 +124,16 @@ def evaluate():
 
 # threshold image using otsu's threshold
 def threshold(img = 'output/edge.png'):
+    if not os.path.exists(f'{img}'):
+        print('Image does not exist!')
+        return
+
     img = cv2.imread(img)
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     otsu_threshold, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
 
+    # save the resulting thresholded image
     plt.imsave('output/threshold_edge.png', img)
 
 
