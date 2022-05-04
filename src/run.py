@@ -9,18 +9,13 @@ import model, data
 
 
 # train the model
-def train(model_name):
+def train(model_name = 'sigmoid'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
     do_unet = model.DO_UNet(train_img_files,
                             test_img_files)
-
-    do_unet.fit(model_name,
-                epochs=100,
-                imgs_per_epoch=1000,
-                batchsize=8,
-                workers=8)
+    do_unet.fit(model_name)
 
 
 # extract number of image chips for an image
@@ -50,7 +45,8 @@ def concat(imgs):
 
 
 # predict (segment) image and save a sample output
-def predict(image = glob.glob('data/test/Im037_0.jpg')):
+def predict(image = glob.glob('data/test/Im037_0.jpg'),
+            model_name = 'sigmoid'):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
@@ -101,7 +97,7 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
 
 
 # evaluate model accuracies (mask accuracy and edge accuracy)
-def evaluate(model_name):
+def evaluate(model_name = 'sigmoid'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -138,6 +134,5 @@ def threshold(img = 'output/edge.png'):
 
 
 if __name__ == '__main__':
-    # predict()
-    # threshold()
-    evaluate('sigmoid')
+    predict()
+    threshold()
