@@ -68,6 +68,8 @@ def predict(image = glob.glob('data/test/Im037_0.jpg')):
     new_mask = concat(new_mask_chips)
     new_edge = concat(new_edge_chips)
 
+    plt.imsave('mask.png', new_mask)
+
     fig = plt.figure(figsize=(25, 12), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
     ax = fig.add_subplot(2, 3, 1)
@@ -107,5 +109,17 @@ def evaluate():
     print(do_unet.evaluate(img_chips, (mask_chips, edge_chips)))
 
 
+def threshold(img = 'mask.png'):
+    img = cv2.imread(img)
+
+    otsu_threshold, img = cv2.threshold(img, 0, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+
+    plt.imsave('threshold_mask.png', img)
+
+
+
+
 if __name__ == '__main__':
     predict()
+    threshold()
+
