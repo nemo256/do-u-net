@@ -73,6 +73,10 @@ def predict(image = glob.glob('data/test/Im037_0.jpg'),
     new_mask = concat(new_mask_chips)
     new_edge = concat(new_edge_chips)
 
+    # save predicted mask and edge
+    plt.imsave('output/mask.png', new_mask)
+    plt.imsave('output/edge.png', new_edge)
+
     # organize results into one figure
     fig = plt.figure(figsize=(25, 12), dpi=80)
     fig.subplots_adjust(hspace=0.1, wspace=0.1)
@@ -134,6 +138,7 @@ def threshold(img = 'output/edge.png'):
     plt.imsave('output/threshold_edge.png', img)
 
 
+# count how many cells from the predicted edges
 def count_circles(img = 'output/edge.png'):
     if not os.path.exists(f'{img}'):
         print('Image does not exist!')
@@ -143,7 +148,7 @@ def count_circles(img = 'output/edge.png'):
 
     # convert to grayscale and apply Circle Hough Transform (CHT)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1.1871, minDist=25, maxRadius=56, minRadius=28, param1=30, param2=20)
+    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1, minDist=33, maxRadius=55, minRadius=28, param1=30, param2=20)
     output = img.copy()
 
     # ensure at least some circles were found
@@ -164,6 +169,6 @@ def count_circles(img = 'output/edge.png'):
 
 
 if __name__ == '__main__':
-    # predict()
-    # threshold()
+    predict()
+    threshold()
     count_circles()
