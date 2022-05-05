@@ -143,7 +143,7 @@ def count_circles(img = 'output/edge.png'):
 
     # convert to grayscale and apply Circle Hough Transform (CHT)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1.2, 20, maxRadius=50, minRadius=32, param1=30, param2=20)
+    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1.1871, minDist=25, maxRadius=56, minRadius=28, param1=30, param2=20)
     output = img.copy()
 
     # ensure at least some circles were found
@@ -158,6 +158,9 @@ def count_circles(img = 'output/edge.png'):
             cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
         # save the output image
         plt.imsave('output/count_circles.png', np.hstack([img, output]))
+
+    print(f'Real count: {len(data.make_polygon_lists(["data/test/Im037_0.json"])[0])}')
+    print(f'Predicted count: {len(circles)}')
 
 
 if __name__ == '__main__':
