@@ -126,6 +126,7 @@ def threshold(img = 'output/edge.png'):
 
     img = cv2.imread(img)
 
+    # convert to grayscale and apply otsu's thresholding
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     otsu_threshold, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
 
@@ -133,6 +134,33 @@ def threshold(img = 'output/edge.png'):
     plt.imsave('output/threshold_edge.png', img)
 
 
+def count_circles(img = 'output/edge.png'):
+    if not os.path.exists(f'{img}'):
+        print('Image does not exist!')
+        return
+
+    img = cv2.imread(img)
+
+    # convert to grayscale and apply Circle Hough Transform (CHT)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1.2, 20, maxRadius=50, minRadius=32, param1=30, param2=20)
+    output = img.copy()
+
+    # ensure at least some circles were found
+    if circles is not None:
+        # convert the (x, y) coordinates and radius of the circles to integers
+        circles = np.round(circles[0, :]).astype("int")
+        # loop over the (x, y) coordinates and radius of the circles
+        for (x, y, r) in circles:
+            # draw the circle in the output image, then draw a rectangle
+            # corresponding to the center of the circle
+            cv2.circle(output, (x, y), r, (0, 255, 0), 4)
+            cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+        # save the output image
+        plt.imsave('output/count_circles.png', np.hstack([img, output]))
+
+
 if __name__ == '__main__':
-    predict()
-    threshold()
+    # predict()
+    # threshold()
+    count_circles()
