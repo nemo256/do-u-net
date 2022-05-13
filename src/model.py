@@ -155,10 +155,10 @@ def get_do_unet():
 
     opt = tf.optimizers.Adam(learning_rate=0.0001)
 
-    model.compile(loss="binary_crossentropy",
-                  loss_weights=[0.3, 0.7],
-                  optimizer="adam",
-                  metrics=["Accuracy"])
+    model.compile(loss=focal_tversky,
+                  loss_weights=[0.1, 0.9],
+                  optimizer=opt,
+                  metrics=["accuracy"])
 
     return model
 

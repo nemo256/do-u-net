@@ -15,7 +15,8 @@ def train(model_name = 'sigmoid'):
 
     do_unet = model.DO_UNet(train_img_files,
                             test_img_files)
-    do_unet.fit(model_name)
+    do_unet.fit(model_name,
+                epochs=10)
 
 
 # extract number of image chips for an image
@@ -172,3 +173,4 @@ if __name__ == '__main__':
     predict()
     threshold()
     count_circles()
+    # train('focal_tversky')
