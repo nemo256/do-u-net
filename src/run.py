@@ -46,7 +46,7 @@ def concat(imgs):
 
 
 # predict (segment) image and save a sample output
-def predict(img='Im037_0.jpg'),
+def predict(img='Im037_0.jpg',
             model_name='binary_crossentropy'):
     image = glob.glob(f'data/test/{img}')
     do_unet = model.get_do_unet()
