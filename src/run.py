@@ -9,7 +9,7 @@ import model, data
 
 
 # train the model
-def train(model_name = 'sigmoid'):
+def train(model_name = 'binary_crossentropy'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -47,7 +47,7 @@ def concat(imgs):
 
 # predict (segment) image and save a sample output
 def predict(image = glob.glob('data/test/Im037_0.jpg'),
-            model_name = 'sigmoid'):
+            model_name = 'binary_crossentropy'):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
@@ -102,7 +102,7 @@ def predict(image = glob.glob('data/test/Im037_0.jpg'),
 
 
 # evaluate model accuracies (mask accuracy and edge accuracy)
-def evaluate(model_name = 'sigmoid'):
+def evaluate(model_name = 'binary_crossentropy'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -170,7 +170,8 @@ def count_circles(img = 'output/edge.png'):
 
 
 if __name__ == '__main__':
-    predict()
-    threshold()
-    count_circles()
+    evaluate('binary_crossentropy')
+    predict(model_name='binary_crossentropy')
+    # threshold()
+    # count_circles()
     # train('focal_tversky')
