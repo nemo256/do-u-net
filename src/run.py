@@ -9,7 +9,7 @@ import model, data
 
 
 # train the model
-def train(model_name = 'binary_crossentropy'):
+def train(model_name='binary_crossentropy'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -46,8 +46,8 @@ def concat(imgs):
 
 
 # predict (segment) image and save a sample output
-def predict(image = glob.glob('data/test/Im037_0.jpg'),
-            model_name = 'binary_crossentropy'):
+def predict(image=glob.glob('data/test/Im037_0.jpg'),
+            model_name='binary_crossentropy'):
     do_unet = model.get_do_unet()
 
     # Check for existing weights
@@ -77,6 +77,7 @@ def predict(image = glob.glob('data/test/Im037_0.jpg'),
     # save predicted mask and edge
     plt.imsave('output/mask.png', new_mask)
     plt.imsave('output/edge.png', new_edge)
+    plt.imsave('output/edge-mask.png', new_mask - new_edge)
 
     # organize results into one figure
     fig = plt.figure(figsize=(25, 12), dpi=80)
@@ -102,7 +103,7 @@ def predict(image = glob.glob('data/test/Im037_0.jpg'),
 
 
 # evaluate model accuracies (mask accuracy and edge accuracy)
-def evaluate(model_name = 'binary_crossentropy'):
+def evaluate(model_name='binary_crossentropy'):
     train_img_files = glob.glob('data/train/*.jpg')
     test_img_files = glob.glob('data/test/*.jpg')
 
@@ -124,28 +125,28 @@ def evaluate(model_name = 'binary_crossentropy'):
 
 
 # threshold image using otsu's threshold
-def threshold(img = 'output/edge.png'):
-    if not os.path.exists(f'{img}'):
+def threshold(img='edge.png'):
+    if not os.path.exists(f'output/{img}'):
         print('Image does not exist!')
         return
 
-    img = cv2.imread(img)
+    image = cv2.imread(f'output/{img}')
 
     # convert to grayscale and apply otsu's thresholding
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    otsu_threshold, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    otsu_threshold, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
 
     # save the resulting thresholded image
-    plt.imsave('output/threshold_edge.png', img)
+    plt.imsave(f'output/threshold_{img}', image)
 
 
 # count how many cells from the predicted edges
-def count_circles(img = 'output/edge.png'):
-    if not os.path.exists(f'{img}'):
+def count_circles(img='edge.png'):
+    if not os.path.exists(f'output/{img}'):
         print('Image does not exist!')
         return
 
-    img = cv2.imread(img)
+    img = cv2.imread(f'output/{img}')
 
     # convert to grayscale and apply Circle Hough Transform (CHT)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -170,8 +171,8 @@ def count_circles(img = 'output/edge.png'):
 
 
 if __name__ == '__main__':
-    evaluate('binary_crossentropy')
+    # train('binary_crossentropy')
+    # evaluate('binary_crossentropy')
     predict(model_name='binary_crossentropy')
-    # threshold()
-    # count_circles()
-    # train('focal_tversky')
+    threshold(img='edge.png')
+    count_circles(img='edge.png')
