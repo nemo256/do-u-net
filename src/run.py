@@ -173,8 +173,8 @@ def count_circles(img='edge.png'):
 
 if __name__ == '__main__':
     # train('binary_crossentropy')
-    evaluate(model_name='binary_crossentropy')
-    predict(model_name='binary_crossentropy')
+    # evaluate(model_name='binary_crossentropy')
+    predict(model_name='binary_crossentropy', img='Im037_0.jpg')
     threshold(img='mask.png')
     threshold(img='edge.png')
     threshold(img='edge-mask.png')
